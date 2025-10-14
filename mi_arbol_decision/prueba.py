@@ -76,3 +76,23 @@ arbol_decision.entrenar(pd_dataframe, nombre_objetivo)
 
 print("\n\n")
 imprimir_arbol2(arbol_decision.raiz_arbol)
+
+print("\n\n")
+instancia1 = {
+    'Loves Soda': 'No',
+    'Loves Popcorn': 'No importa',
+    'Age': 99,
+}
+print("Clase instancia 1: " + arbol_decision.predecir(instancia1))
+instancia2 = {
+    'Loves Soda': 'Yes',
+    'Age': 12,
+    'Loves Popcorn': 'No importa',
+}
+print("Clase instancia 2: " + arbol_decision.predecir(instancia2))
+instancia3 = {
+    'Loves Soda': 'Yes',
+    'Age': 22,
+    'Loves Popcorn': 'No importa',
+}
+print("Clase instancia 3: " + arbol_decision.predecir(instancia3))

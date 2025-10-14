@@ -18,8 +18,12 @@ class ArbolDecision:
         print("----- FASE DE ENTRENAMIENTO -----")
         self.df: DataFrame = df
         self.nombre_objetivo: str = nombre_objetivo
-        lista_atributos = list(df.drop(nombre_objetivo, axis=1).columns)
-        self.raiz_arbol = self._construir_arbol(df, lista_atributos)
+        self.raiz_arbol = self._construir_arbol(df, self._obtener_lista_atributos())
+
+    def _obtener_lista_atributos(self) -> list:
+        if self.df is None or self.nombre_objetivo.strip() == '':
+            return list()
+        return list(self.df.drop(self.nombre_objetivo, axis=1).columns)
 
     def _construir_arbol(self, df: DataFrame, atributos_disponibles: list[str]) -> Nodo:
         columna_clases: Series = df[self.nombre_objetivo]
@@ -172,3 +176,45 @@ class ArbolDecision:
             entropia_atributo += probabilidad_valor_atributo * calcular_entropia(subconjunto_clases)
 
         return entropia_atributo
+
+    # Predice la clase para una única instancia de datos.
+    def predecir(self, instancia: dict):
+        # Validaciones previas
+        lista_atributos = self._obtener_lista_atributos()
+        if self.raiz_arbol is None:
+            raise RuntimeError("El árbol de decisión debe ser entrenado antes de poder predecir.")
+        elif len(instancia.keys()) != len(lista_atributos):
+            raise RuntimeError("Los atributos de la instancia no coinciden con los del árbol.")
+        for atributo in instancia.keys():
+            if atributo not in lista_atributos:
+                raise RuntimeError("El atributo '" + atributo + "' no es válido")
+
+        # Prediccion
+        nodo_actual = self.raiz_arbol
+        while not nodo_actual.es_nodo_hoja():
+            # Obtener el atributo y el valor de la instancia para el nodo actual
+            atributo_decision = nodo_actual.atributo
+            valor_instancia = instancia[atributo_decision]
+
+            # Lógica para decidir la siguiente rama
+            es_atributo_categorico = nodo_actual.umbral is None
+            if es_atributo_categorico:
+                # Si el valor de la instancia existe como una rama en el árbol
+                if valor_instancia in nodo_actual.nodos_hijos:
+                    nodo_actual = nodo_actual.nodos_hijos[valor_instancia]
+                else:
+                    # Caso de respaldo:
+                    # Si el valor no se vio durante el entrenamiento en esta rama, predice la clase más común de este nodo.
+                    return nodo_actual.clase_mas_comun
+            else:
+                if valor_instancia <= nodo_actual.umbral:
+                    # La clave para la rama "menor o igual"
+                    llave_hijo = f"<= {nodo_actual.umbral}"
+                else:
+                    # La clave para la rama "mayor que"
+                    llave_hijo = f"> {nodo_actual.umbral}"
+
+                nodo_actual = nodo_actual.nodos_hijos[llave_hijo]
+
+        # Cuando se llega a un nodo hoja, se retorna su valor como predicción
+        return nodo_actual.valor
