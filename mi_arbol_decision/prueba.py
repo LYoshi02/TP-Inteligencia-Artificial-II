@@ -1,44 +1,54 @@
 import pandas as pd
 
 # from mi_arbol_decision.algoritmo import ArbolDecision, Nodo
-from mi_arbol_decision.algoritmo2 import ArbolDecision, Nodo
+# from mi_arbol_decision.algoritmo2 import ArbolDecision, Nodo
+from mi_arbol_decision.algoritmo3 import ArbolDecision, Nodo
+from mi_arbol_decision.funcion_impureza.funcion import FUNCIONES_IMPUREZA
 
-def imprimir_arbol(nodo, indent=""):
-    if nodo.es_nodo_hoja():
-        print(f"{indent}Predicción -> Clase: {nodo.valor}")
-        return
+# def imprimir_arbol(nodo, indent=""):
+#     if nodo.es_nodo_hoja():
+#         print(f"{indent}Predicción -> Clase: {nodo.valor}")
+#         return
+#
+#     print(f"{indent}Nodo de decisión: ¿Cuál es el valor de '{nodo.atributo}'?")
+#     for valor, nodo_hijo in nodo.nodos_hijos.items():
+#         print(f"{indent}├─ Si es '{valor}':")
+#         imprimir_arbol(nodo_hijo, indent + "│  ")
 
-    print(f"{indent}Nodo de decisión: ¿Cuál es el valor de '{nodo.atributo}'?")
-    for valor, nodo_hijo in nodo.nodos_hijos.items():
-        print(f"{indent}├─ Si es '{valor}':")
-        imprimir_arbol(nodo_hijo, indent + "│  ")
+# def imprimir_arbol2(nodo: Nodo, indent=""):
+#     """
+#     Imprime recursivamente el árbol de decisión de una manera visualmente clara.
+#     Maneja tanto nodos de atributos categóricos como continuos.
+#     """
+#     # Caso base: si el nodo es una hoja, imprime la predicción final de esa rama.
+#     if nodo.es_nodo_hoja():
+#         print(f"{indent}Predicción -> Clase: {nodo.valor}")
+#         return
+#
+#     # Comprueba si el nodo corresponde a un atributo continuo (si tiene un umbral).
+#     if nodo.umbral is not None:
+#         # La pregunta se basa en si el valor del atributo es menor o igual al umbral.
+#         pregunta = f"¿'{nodo.atributo}' <= {nodo.umbral}?"
+#     else:
+#         # Para atributos categóricos, la pregunta es sobre el valor del atributo.
+#         pregunta = f"¿Cuál es el valor de '{nodo.atributo}'?"
+#
+#     print(f"{indent}Nodo de decisión: {pregunta}")
+#
+#     # Itera sobre cada rama (hijo) del nodo actual.
+#     # La variable 'condicion' ya contiene la descripción de la rama,
+#     # ya sea un valor categórico ('soleado') o una condición continua ('<= 30.5').
+#     for condicion, nodo_hijo in nodo.nodos_hijos.items():
+#         print(f"{indent}├─ Si es '{condicion}':")
+#         imprimir_arbol(nodo_hijo, indent + "│  ")
 
-def imprimir_arbol2(nodo: Nodo, indent=""):
-    """
-    Imprime recursivamente el árbol de decisión de una manera visualmente clara.
-    Maneja tanto nodos de atributos categóricos como continuos.
-    """
-    # Caso base: si el nodo es una hoja, imprime la predicción final de esa rama.
-    if nodo.es_nodo_hoja():
-        print(f"{indent}Predicción -> Clase: {nodo.valor}")
-        return
-
-    # Comprueba si el nodo corresponde a un atributo continuo (si tiene un umbral).
-    if nodo.umbral is not None:
-        # La pregunta se basa en si el valor del atributo es menor o igual al umbral.
-        pregunta = f"¿'{nodo.atributo}' <= {nodo.umbral}?"
-    else:
-        # Para atributos categóricos, la pregunta es sobre el valor del atributo.
-        pregunta = f"¿Cuál es el valor de '{nodo.atributo}'?"
-
-    print(f"{indent}Nodo de decisión: {pregunta}")
-
-    # Itera sobre cada rama (hijo) del nodo actual.
-    # La variable 'condicion' ya contiene la descripción de la rama,
-    # ya sea un valor categórico ('soleado') o una condición continua ('<= 30.5').
-    for condicion, nodo_hijo in nodo.nodos_hijos.items():
-        print(f"{indent}├─ Si es '{condicion}':")
-        imprimir_arbol(nodo_hijo, indent + "│  ")
+data_ejercicio_1 = {
+    'c': ['X', 'Y', 'Z', 'X', 'X', 'Y', 'Z', 'Z', 'Y', 'Z'],
+    'AtributoB': ['S', 'T', 'T', 'T', 'T', 'S', 'S', 'S', 'T', 'S'],
+    'AtributoC': ['O', 'P', 'O', 'O', 'P', 'P', 'P', 'P', 'P', 'P'],
+    'AtributoD': ['Q', 'R', 'R', 'R', 'Q', 'Q', 'Q', 'Q', 'R', 'Q'],
+    'Clase': ['2', '1', '3', '3', '3', '1', '1', '2', '2', '3']
+}
 
 data_ejercicio_2 = {
     'Formación secundaria': ['Técnica', 'Técnica', 'No Técnica', 'No Técnica', 'Técnica', 'Técnica'],
@@ -50,10 +60,12 @@ data_ejercicio_2 = {
 data_ejercicio_3 = {
     'Hipertenso': ['NO', 'SI', 'SI', 'SI', 'NO', 'NO', 'SI', 'SI', 'SI', 'NO'],
     'Colesterol': ['Bajo', 'Bajo', 'Bajo', 'Medio', 'Medio', 'Medio', 'Alto', 'Alto', 'Alto', 'Alto'],
-    'Triglicéridos': ['Normal', 'Elevado', 'Elevado', 'Elevado', 'Elevado', 'Normal', 'Normal', 'Normal', 'Elevado', 'Normal'],
-    'Edad': ['Menor 40', 'Menor 40', 'Mayor a 60', 'Mayor a 60', 'Menor 40', 'Entre 40-60', 'Entre 40-60', 'Entre 40-60', 'Mayor a 60', 'Menor 40'],
+    'Triglicéridos': ['Normal', 'Elevado', 'Elevado', 'Elevado', 'Elevado', 'Normal', 'Normal', 'Normal', 'Elevado',
+                      'Normal'],
+    'Edad': ['Menor 40', 'Menor 40', 'Mayor a 60', 'Mayor a 60', 'Menor 40', 'Entre 40-60', 'Entre 40-60',
+             'Entre 40-60', 'Mayor a 60', 'Menor 40'],
     'Diabético': ['SI', 'SI', 'SI', 'NO', 'NO', 'SI', 'SI', 'SI', 'NO', 'NO'],
-    'Clase': ['NO', 'NO', 'SI', 'SI', 'SI', 'NO', 'SI', 'SI', 'SI', 'NO'] # Problemas Cardiacos
+    'Clase': ['NO', 'NO', 'SI', 'SI', 'SI', 'NO', 'SI', 'SI', 'SI', 'NO']  # Problemas Cardiacos
 }
 
 data_video_yt = {
@@ -63,36 +75,36 @@ data_video_yt = {
     'Loves Cool As Ice': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'No']
 }
 
-nombre_objetivo: str = 'Loves Cool As Ice'
+nombre_objetivo: str = 'Clase'
 
-pd_dataframe = pd.DataFrame(data_video_yt)
+pd_dataframe = pd.DataFrame(data_ejercicio_1)
 
 print("----- DATAFRAME ORIGINAL -----")
 print(pd_dataframe)
 print("\n\n")
 
-arbol_decision = ArbolDecision()
+arbol_decision = ArbolDecision(funcion_impureza=FUNCIONES_IMPUREZA.tasa_ganancia_informacion)
 arbol_decision.entrenar(pd_dataframe, nombre_objetivo)
 
 print("\n\n")
-imprimir_arbol2(arbol_decision.raiz_arbol)
+arbol_decision.imprimir_arbol()
 
-print("\n\n")
-instancia1 = {
-    'Loves Soda': 'No',
-    'Loves Popcorn': 'No importa',
-    'Age': 99,
-}
-print("Clase instancia 1: " + arbol_decision.predecir(instancia1))
-instancia2 = {
-    'Loves Soda': 'Yes',
-    'Age': 12,
-    'Loves Popcorn': 'No importa',
-}
-print("Clase instancia 2: " + arbol_decision.predecir(instancia2))
-instancia3 = {
-    'Loves Soda': 'Yes',
-    'Age': 22,
-    'Loves Popcorn': 'No importa',
-}
-print("Clase instancia 3: " + arbol_decision.predecir(instancia3))
+# print("\n\n")
+# instancia1 = {
+#     'Loves Soda': 'No',
+#     'Loves Popcorn': 'No importa',
+#     'Age': 99,
+# }
+# print("Clase instancia 1: " + arbol_decision.predecir(instancia1))
+# instancia2 = {
+#     'Loves Soda': 'Yes',
+#     'Age': 12,
+#     'Loves Popcorn': 'No importa',
+# }
+# print("Clase instancia 2: " + arbol_decision.predecir(instancia2))
+# instancia3 = {
+#     'Loves Soda': 'Yes',
+#     'Age': 22,
+#     'Loves Popcorn': 'No importa',
+# }
+# print("Clase instancia 3: " + arbol_decision.predecir(instancia3))
