@@ -44,11 +44,11 @@ class ArbolDecision:
 
         if self._tiene_una_sola_clase(columna_clases):
             print("Criterio de parada 1: hay una sola clase en este conjunto")
-            print("Se crea un nodo hoja con clase: " + clase_mas_comun)
+            print("Se crea un nodo hoja con clase: " + str(clase_mas_comun))
             return Nodo(valor=clase_mas_comun, clase_mas_comun=clase_mas_comun)
         elif not self._hay_atributos_disponibles(atributos_disponibles):
             print("Criterio de parada 2: no hay más atributos disponibles para esta rama")
-            print("Se crea un nodo hoja con clase: " + clase_mas_comun)
+            print("Se crea un nodo hoja con clase: " + str(clase_mas_comun))
             return Nodo(valor=clase_mas_comun, clase_mas_comun=clase_mas_comun)
         else:
             print("Se expande el árbol")
@@ -57,7 +57,7 @@ class ArbolDecision:
             if mejor_atributo.ganancia < self.umbral_ganancia:
                 print(
                     "El atributo '" + mejor_atributo.nombre + "' no reduce significativamente la impureza")
-                print("Se crea un nodo hoja con clase: " + clase_mas_comun)
+                print("Se crea un nodo hoja con clase: " + str(clase_mas_comun))
                 return Nodo(valor=clase_mas_comun, clase_mas_comun=clase_mas_comun)
 
             # Crear un nodo de decisión y construir los hijos
